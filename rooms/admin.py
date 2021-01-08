@@ -6,12 +6,83 @@ from . import models
 
 @admin.register(models.RoomType, models.Facility, models.Amenity, models.HouseRule)
 class ItemAdmin(admin.ModelAdmin):
-    pass
+    list_display = ("name", "used_by")
+
+    def used_by(self, obj):
+        return obj.rooms.count()
 
 
 @admin.register(models.Room)
 class RoomAdmin(admin.ModelAdmin):
-    pass
+
+    fieldsets = (
+        ("Spaces", {"fields": ("guests", "beds", "bedrooms", "baths")}),
+        (
+            "Basic Info",
+            {"fields": ("name", "description", "country", "city", "address", "price")},
+        ),
+        ("Times", {"fields": ("check_in", "check_out", "instant_book")}),
+        (
+            "More About The Space",
+            {
+                "classes": ("collapse",),
+                "fields": (
+                    "amenities",
+                    "facilities",
+                    "house_rules",
+                ),
+            },
+        ),
+        (
+            "Last Details",
+            {"fields": ("host",)},
+        ),
+    )
+    list_display = (
+        "name",
+        "description",
+        "country",
+        "city",
+        "price",
+        "address",
+        "guests",
+        "beds",
+        "bedrooms",
+        "baths",
+        "check_in",
+        "check_out",
+        "instant_book",
+        "count_amenities",
+        "count_photos",
+        "total_rating",
+    )
+
+    ordering = ("price",)
+
+    list_filter = (
+        "instant_book",
+        "host__superhost",
+        "room_type",
+        "amenities",
+        "facilities",
+        "house_rules",
+        "city",
+        "country",
+    )
+
+    search_fields = ("=city", "^host__username")
+
+    filter_horizontal = (
+        "amenities",
+        "facilities",
+        "house_rules",
+    )
+
+    def count_amenities(self, obj):
+        return obj.amenities.count()
+
+    def count_photos(self, obj):
+        return obj.photos.count()
 
 
 @admin.register(models.Photo)
