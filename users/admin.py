@@ -8,6 +8,11 @@ from rooms import models as room_models
 
 class RoomInline(admin.StackedInline):
     model = room_models.Room
+    filter_horizontal = (
+        "amenities",
+        "facilities",
+        "house_rules",
+    )
 
 
 @admin.register(models.User)
