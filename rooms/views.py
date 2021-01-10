@@ -1,8 +1,25 @@
+from math import ceil
 from datetime import datetime
 from django.shortcuts import render  # response에 html을 넣어서 전달할 수 있게 해준다 !
 from . import models
 
 
 def all_rooms(request):
-    all_rooms = models.Room.objects.all()
-    return render(request, "rooms/home.html", context={"rooms": all_rooms})
+    page = request.GET.get("page", 1)
+    page = int(page or 1)
+    page_size = 10
+    limit = page_size * page
+    offset = limit - page_size
+    all_rooms = models.Room.objects.all()[offset:limit]
+    page_count = ceil(models.Room.objects.count() / page_size)
+    page_range = range(1, page_count + 1)
+    return render(
+        request,
+        "rooms/home.html",
+        context={
+            "rooms": all_rooms,
+            "page": page,
+            "page_count": page_count,
+            "page_range": page_range,
+        },
+    )

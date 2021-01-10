@@ -10,5 +10,6 @@
   "[python]": {
     "editor.defaultFormatter": null
   },
-  "prettier.disableLanguages": ["django-html"]
+  "prettier.disableLanguages": ["django-html"],
+  "emmet.includeLanguages": { "django-html": "html" }
 }
